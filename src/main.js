@@ -9,7 +9,7 @@ const MainPage = () => /* HTML */ `
         <ul class="flex justify-around">
           <li><a href="/" class="text-blue-600">홈</a></li>
           <li><a href="/profile" class="text-gray-600">프로필</a></li>
-          <li><a href="#" class="text-gray-600">로그아웃</a></li>
+          <li><a href="#" class="text-gray-600" id="logout">로그아웃</a></li>
         </ul>
       </nav>
 
@@ -159,17 +159,21 @@ const LoginPage = () => /* HTML */ `
       <h1 class="text-2xl font-bold text-center text-blue-600 mb-8">
         항해플러스
       </h1>
-      <form>
+      <form id="login-form">
         <div class="mb-4">
           <input
             type="text"
-            placeholder="이메일 또는 전화번호"
+            id="username"
+            name="username"
+            placeholder="사용자 이름"
             class="w-full p-2 border rounded"
           />
         </div>
         <div class="mb-6">
           <input
             type="password"
+            id="password"
+            name="password"
             placeholder="비밀번호"
             class="w-full p-2 border rounded"
           />
@@ -206,7 +210,7 @@ const ProfilePage = () => /* HTML */ `
           <ul class="flex justify-around">
             <li><a href="/" class="text-gray-600">홈</a></li>
             <li><a href="/profile" class="text-blue-600">프로필</a></li>
-            <li><a href="#" class="text-gray-600">로그아웃</a></li>
+            <li><a href="#" class="text-gray-600" id="logout">로그아웃</a></li>
           </ul>
         </nav>
 
@@ -215,7 +219,7 @@ const ProfilePage = () => /* HTML */ `
             <h2 class="text-2xl font-bold text-center text-blue-600 mb-8">
               내 프로필
             </h2>
-            <form>
+            <form id="profile-form">
               <div class="mb-4">
                 <label
                   for="username"
@@ -281,19 +285,82 @@ function renderPage() {
   const root = document.getElementById("root");
   if (!root) return;
 
+  const user = localStorage.getItem("user");
+
+  // loginForm과 profileForm 변수를 switch문 밖에서 선언
+  let loginForm;
+  let profileForm;
+
   switch (window.location.pathname) {
     case "/":
       root.innerHTML = MainPage();
       break;
     case "/profile":
-      root.innerHTML = ProfilePage();
+      if (user) {
+        root.innerHTML = ProfilePage();
+        profileForm = document.getElementById("profile-form");
+        if (profileForm) {
+          const userData = JSON.parse(localStorage.getItem("user"));
+          console.log(userData);
+
+          document.getElementById("username").value = userData.username || "";
+          document.getElementById("email").value = userData.email || "";
+          document.getElementById("bio").value = userData.bio || "";
+
+          profileForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const updatedUser = {
+              username: document.getElementById("username").value,
+              email: document.getElementById("email").value,
+              bio: document.getElementById("bio").value,
+            };
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+          });
+        }
+      } else {
+        history.pushState({}, "", "/login");
+        renderPage();
+      }
       break;
     case "/login":
       root.innerHTML = LoginPage();
+      loginForm = document.getElementById("login-form");
+      if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              username,
+              email: "",
+              bio: "",
+            }),
+          );
+          history.pushState({}, "", "/");
+          renderPage();
+        });
+      }
       break;
     default:
       root.innerHTML = ErrorPage();
       break;
+  }
+
+  const logoutButton = document.getElementById("logout");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // localStorage 초기화를 먼저 수행
+      localStorage.removeItem("user");
+
+      // 라우팅 변경은 그 다음에 수행
+      history.pushState({}, "", "/");
+      renderPage();
+    });
   }
 }
 
