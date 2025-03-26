@@ -281,97 +281,122 @@ const ProfilePage = () => /* HTML */ `
   </div>
 `;
 
-function renderPage() {
-  const root = document.getElementById("root");
-  if (!root) return;
-
-  const user = localStorage.getItem("user");
-
-  // loginForm과 profileForm 변수를 switch문 밖에서 선언
-  let loginForm;
-  let profileForm;
-
-  switch (window.location.pathname) {
-    case "/":
-      root.innerHTML = MainPage();
-      break;
-    case "/profile":
-      if (user) {
-        root.innerHTML = ProfilePage();
-        profileForm = document.getElementById("profile-form");
-        if (profileForm) {
-          const userData = JSON.parse(localStorage.getItem("user"));
-          console.log(userData);
-
-          document.getElementById("username").value = userData.username || "";
-          document.getElementById("email").value = userData.email || "";
-          document.getElementById("bio").value = userData.bio || "";
-
-          profileForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const updatedUser = {
-              username: document.getElementById("username").value,
-              email: document.getElementById("email").value,
-              bio: document.getElementById("bio").value,
-            };
-            localStorage.setItem("user", JSON.stringify(updatedUser));
-          });
-        }
-      } else {
-        history.pushState({}, "", "/login");
-        renderPage();
-      }
-      break;
-    case "/login":
-      root.innerHTML = LoginPage();
-      loginForm = document.getElementById("login-form");
-      if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const username = document.getElementById("username").value;
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              username,
-              email: "",
-              bio: "",
-            }),
-          );
-          history.pushState({}, "", "/");
-          renderPage();
-        });
-      }
-      break;
-    default:
-      root.innerHTML = ErrorPage();
-      break;
-  }
-
-  const logoutButton = document.getElementById("logout");
-  if (logoutButton) {
-    logoutButton.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      // localStorage 초기화를 먼저 수행
-      localStorage.removeItem("user");
-
-      // 라우팅 변경은 그 다음에 수행
-      history.pushState({}, "", "/");
-      renderPage();
-    });
+// FIXME:라우팅 함수 - 얘가 문제인가
+function route(path, callback) {
+  console.log("route", path);
+  if (window.location.pathname === path) {
+    callback();
   }
 }
 
-renderPage();
+// 렌더링 함수
+// TODO: 인자로 path를 받아오는게 좋은지, 내부에서 현재 path를 가져오는게 좋은지
+// TODO: 콘텐츠 로드 함수를 분리하는게 별로인지
+const render = () => {
+  const path = window.location.pathname;
 
-window.addEventListener("popstate", renderPage);
+  console.log("render", path);
+  switch (path) {
+    case "/":
+      loadContent(MainPage());
+      break;
+    case "/profile":
+      // isLoggedIn() ? loadContent(ProfilePage()) : loadContent(LoginPage());
+      isLoggedIn();
+      loadContent(ProfilePage());
+      break;
+    case "/login":
+      loadContent(LoginPage());
+      break;
+    default:
+      loadContent(ErrorPage());
+      break;
+  }
+};
 
-// 모든 페이지의 콘텐츠가 동시에 DOM에 추가됨
-// document.body.innerHTML = `
-//   ${MainPage()}
-//   ${ProfilePage()}
-//   ${LoginPage()}
-//   ${ErrorPage()}
-// `;
+// 콘텐츠 로드 함수
+function loadContent(content) {
+  console.log("loadContent", content);
+  const rootElement = document.getElementById("root");
+  if (!rootElement) return;
+
+  while (rootElement.firstChild) {
+    rootElement.removeChild(rootElement.firstChild);
+  }
+
+  rootElement.innerHTML = content;
+}
+
+// popstate 이벤트 리스너
+window.addEventListener("popstate", () => {
+  render();
+});
+
+// 로그인 체크 함수
+// FIXME: 이 안에서 라우팅을 바꿔줄 수 없는가
+const isLoggedIn = () => {
+  const user = localStorage.getItem("user");
+  if (!user) {
+    // 브라우저의 히스토리 스택에 login 페이지로 교체 && 리다이렉션...?
+    history.replaceState({}, "", "/login");
+    // FIXME: 로그인 페이지로 리다이렉션
+    // route("/login", render);
+    return false;
+  }
+  return true;
+};
+
+const logOut = () => {
+  localStorage.removeItem("user");
+  // 브라우저의 히스토리 스택에 메인 페이지로 교체
+  history.replaceState({}, "", "/");
+  route("/", render);
+};
+
+// 클릭 이벤트 리스너
+window.addEventListener("click", (e) => {
+  console.log("click", e.target);
+  if (e.target.tagName === "A") {
+    e.preventDefault();
+    const path = e.target.href?.split("/").pop() ?? "/";
+    console.log("click", path);
+    history.pushState({}, "", path);
+    route(path, render);
+  } else if (e.target.id === "logout") {
+    logOut();
+  }
+});
+
+// 로드 이벤트 리스너
+window.addEventListener("load", () => {
+  console.log("load");
+  render();
+});
+
+// 제출 이벤트 리스너
+window.addEventListener("submit", (e) => {
+  console.log("submit", e.target);
+  // 로그인 폼 제출 이벤트
+  if (e.target.id === "login-form") {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const user = { username, email: "", bio: "" };
+    localStorage.removeItem("user");
+    localStorage.setItem("user", JSON.stringify(user));
+    history.pushState({}, "", "/");
+    route("/", render);
+  }
+  // 프로필 폼 제출 이벤트
+  if (e.target.id === "profile-form") {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const bio = document.getElementById("bio").value;
+    const user = { username, email, bio };
+    console.log("profile", user);
+    localStorage.removeItem("user");
+    localStorage.setItem("user", JSON.stringify(user));
+    // history.pushState({}, "", "/");
+    // route("/", render);
+  }
+});
