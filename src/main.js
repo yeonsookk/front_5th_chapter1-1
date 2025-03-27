@@ -19,12 +19,20 @@ function handleRoute() {
   if (path === "/profile") {
     if (!isLoggedIn()) {
       // 로그인 페이지로 리다이렉트
-      history.replaceState({}, "", "/login");
+      window.history.replaceState({}, "", "/login");
       page = routes["/login"];
     } else {
       // URL을 /profile로 유지하고 프로필 페이지 표시
-      history.replaceState({}, "", "/profile");
+      window.history.replaceState({}, "", "/profile");
       page = routes["/profile"];
+    }
+  } else if (path === "/login") {
+    if (isLoggedIn()) {
+      window.history.replaceState({}, "", "/");
+      page = routes["/"];
+    } else {
+      window.history.replaceState({}, "", "/login");
+      page = routes["/login"];
     }
   } else {
     page = routes[path] || routes["*"];
@@ -81,12 +89,14 @@ window.addEventListener("click", (e) => {
     e.preventDefault();
     navigate(link.href);
   } else if (e.target.id === "login") {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ username, email: "", bio: "" }),
-    );
+    if (!isLoggedIn()) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ username, email: "", bio: "" }),
+      );
+    }
     navigate("/"); // 로그인 후 홈으로 이동
   } else if (e.target.id === "logout") {
     console.log("logout");
