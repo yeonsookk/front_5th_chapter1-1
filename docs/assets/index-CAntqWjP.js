@@ -1,34 +1,34 @@
 (function () {
   const t = document.createElement("link").relList;
   if (t && t.supports && t.supports("modulepreload")) return;
-  for (const l of document.querySelectorAll('link[rel="modulepreload"]')) n(l);
-  new MutationObserver((l) => {
-    for (const o of l)
-      if (o.type === "childList")
-        for (const r of o.addedNodes)
-          r.tagName === "LINK" && r.rel === "modulepreload" && n(r);
+  for (const o of document.querySelectorAll('link[rel="modulepreload"]')) a(o);
+  new MutationObserver((o) => {
+    for (const l of o)
+      if (l.type === "childList")
+        for (const r of l.addedNodes)
+          r.tagName === "LINK" && r.rel === "modulepreload" && a(r);
   }).observe(document, { childList: !0, subtree: !0 });
-  function s(l) {
-    const o = {};
+  function n(o) {
+    const l = {};
     return (
-      l.integrity && (o.integrity = l.integrity),
-      l.referrerPolicy && (o.referrerPolicy = l.referrerPolicy),
-      l.crossOrigin === "use-credentials"
-        ? (o.credentials = "include")
-        : l.crossOrigin === "anonymous"
-          ? (o.credentials = "omit")
-          : (o.credentials = "same-origin"),
-      o
+      o.integrity && (l.integrity = o.integrity),
+      o.referrerPolicy && (l.referrerPolicy = o.referrerPolicy),
+      o.crossOrigin === "use-credentials"
+        ? (l.credentials = "include")
+        : o.crossOrigin === "anonymous"
+          ? (l.credentials = "omit")
+          : (l.credentials = "same-origin"),
+      l
     );
   }
-  function n(l) {
-    if (l.ep) return;
-    l.ep = !0;
-    const o = s(l);
-    fetch(l.href, o);
+  function a(o) {
+    if (o.ep) return;
+    o.ep = !0;
+    const l = n(o);
+    fetch(o.href, l);
   }
 })();
-const c = () => !!localStorage.getItem("user"),
+const i = () => !!localStorage.getItem("user"),
   u = () => `
   <header class="bg-blue-600 text-white p-4 sticky top-0">
     <h1 class="text-2xl font-bold">항해플러스</h1>
@@ -37,10 +37,10 @@ const c = () => !!localStorage.getItem("user"),
   m = () => `
   <nav class="bg-white shadow-md p-2 sticky top-14">
     <ul class="flex justify-around">
-      <li><a href="/" class="text-blue-600" data-link>홈</a></li>
+      <li><a href="/" class="text-blue-600 font-bold" data-link>홈</a></li>
       <li><a href="/profile" class="text-gray-600" data-link>프로필</a></li>
       ${
-        c()
+        i()
           ? `
             <li>
               <a id="logout" href="#" class="text-gray-600">로그아웃</a>
@@ -76,7 +76,7 @@ const c = () => !!localStorage.getItem("user"),
           </button>
         </div>
 
-        <div class="space-y-4">${g.map(x).join("")}</div>
+        <div class="space-y-4">${g.map(v).join("")}</div>
       </main>
 
       ${f()}
@@ -115,7 +115,7 @@ const c = () => !!localStorage.getItem("user"),
       createdAt: "2시간전",
     },
   ],
-  x = (e) => `
+  v = (e) => `
   <div class="bg-white rounded-lg shadow p-4">
     <div class="flex items-center mb-2">
       <img
@@ -136,7 +136,7 @@ const c = () => !!localStorage.getItem("user"),
     </div>
   </div>
 `,
-  v = () => `
+  x = () => `
   <div id="root">
     <div class="bg-gray-100 min-h-screen flex justify-center">
       <div class="max-w-md w-full">
@@ -206,50 +206,55 @@ const c = () => !!localStorage.getItem("user"),
     </div>
   </div>
 `,
-  h = () => `
-  <main class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h1 class="text-2xl font-bold text-center text-blue-600 mb-8">
-        항해플러스
-      </h1>
-      <form id="login-form">
-        <div class="mb-4">
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="사용자 이름"
-            class="w-full p-2 border rounded"
-          />
+  h = () => (
+    i() &&
+      (history.pushState({}, "", "/"),
+      window.dispatchEvent(new Event("popstate"))),
+    `
+    <main class="bg-gray-100 flex items-center justify-center min-h-screen">
+      <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center text-blue-600 mb-8">
+          항해플러스
+        </h1>
+        <form id="login-form">
+          <div class="mb-4">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="사용자 이름"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          <div class="mb-6">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="비밀번호"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white p-2 rounded font-bold"
+          >
+            로그인
+          </button>
+        </form>
+        <div class="mt-4 text-center">
+          <a href="#" class="text-blue-600 text-sm">비밀번호를 잊으셨나요?</a>
         </div>
-        <div class="mb-6">
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="비밀번호"
-            class="w-full p-2 border rounded"
-          />
+        <hr class="my-6" />
+        <div class="text-center">
+          <button class="bg-green-500 text-white px-4 py-2 rounded font-bold">
+            새 계정 만들기
+          </button>
         </div>
-        <button
-          type="submit"
-          class="w-full bg-blue-600 text-white p-2 rounded font-bold"
-        >
-          로그인
-        </button>
-      </form>
-      <div class="mt-4 text-center">
-        <a href="#" class="text-blue-600 text-sm">비밀번호를 잊으셨나요?</a>
       </div>
-      <hr class="my-6" />
-      <div class="text-center">
-        <button class="bg-green-500 text-white px-4 py-2 rounded font-bold">
-          새 계정 만들기
-        </button>
-      </div>
-    </div>
-  </main>
-`,
+    </main>
+  `
+  ),
   y = () => `
   <main class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div
@@ -268,56 +273,62 @@ const c = () => !!localStorage.getItem("user"),
     </div>
   </main>
 `,
-  a = { "/": b, "/profile": v, "/login": h, "*": y };
-function d() {
+  s = { "/": b, "/profile": x, "/login": h, "*": y };
+function c() {
   const e = window.location.pathname;
   let t;
   e === "/profile"
-    ? c()
-      ? (history.replaceState({}, "", "/profile"), (t = a["/profile"]))
-      : (history.replaceState({}, "", "/login"), (t = a["/login"]))
-    : (t = a[e] || a["*"]),
+    ? i()
+      ? (window.history.replaceState({}, "", "/profile"), (t = s["/profile"]))
+      : (window.history.replaceState({}, "", "/login"), (t = s["/login"]))
+    : e === "/login"
+      ? i()
+        ? (window.history.replaceState({}, "", "/"), (t = s["/"]))
+        : (window.history.replaceState({}, "", "/login"), (t = s["/login"]))
+      : (t = s[e] || s["*"]),
     p(t());
 }
 function p(e) {
   const t = document.getElementById("root");
   if (t && ((t.innerHTML = e), window.location.pathname === "/profile")) {
-    const s = JSON.parse(localStorage.getItem("user"));
-    w(s);
+    const n = JSON.parse(localStorage.getItem("user"));
+    w(n);
   }
 }
 function w(e) {
   if (!document.getElementById("profile-form")) return;
-  const s = document.getElementById("username"),
-    n = document.getElementById("email"),
-    l = document.getElementById("bio");
-  (s.value = e.username || ""),
-    (n.value = e.email || ""),
-    (l.value = e.bio || "");
+  const n = document.getElementById("username"),
+    a = document.getElementById("email"),
+    o = document.getElementById("bio");
+  (n.value = e.username || ""),
+    (a.value = e.email || ""),
+    (o.value = e.bio || "");
 }
-window.addEventListener("popstate", d);
-d();
-function i(e) {
+window.addEventListener("popstate", c);
+c();
+function d(e) {
   history.pushState({}, "", e), window.dispatchEvent(new Event("popstate"));
 }
 window.addEventListener("click", (e) => {
   const t = e.target.closest("[data-link]");
-  if (t) e.preventDefault(), i(t.href);
+  if (t) e.preventDefault(), d(t.href);
   else if (e.target.id === "login") {
-    e.preventDefault();
-    const s = document.getElementById("username").value;
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ username: s, email: "", bio: "" }),
-    ),
-      i("/");
+    if (!i()) {
+      e.preventDefault();
+      const n = document.getElementById("username").value;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ username: n, email: "", bio: "" }),
+      );
+    }
+    d("/");
   } else
     e.target.id === "logout" &&
       (console.log("logout"),
       e.preventDefault(),
       localStorage.removeItem("user"),
       window.history.replaceState({}, "", "/login"),
-      d());
+      c());
 });
 window.addEventListener("submit", (e) => {
   if ((e.preventDefault(), e.target.id === "login-form")) {
@@ -326,15 +337,15 @@ window.addEventListener("submit", (e) => {
       "user",
       JSON.stringify({ username: t, email: "", bio: "" }),
     ),
-      i("/");
+      d("/");
   } else if (e.target.id === "profile-form") {
     const t = document.getElementById("username").value,
-      s = document.getElementById("email").value,
-      n = document.getElementById("bio").value;
+      n = document.getElementById("email").value,
+      a = document.getElementById("bio").value;
     localStorage.setItem(
       "user",
-      JSON.stringify({ username: t, email: s, bio: n }),
+      JSON.stringify({ username: t, email: n, bio: a }),
     ),
-      p(a["/profile"]());
+      p(s["/profile"]());
   }
 });
