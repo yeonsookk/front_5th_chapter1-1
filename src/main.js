@@ -4,7 +4,7 @@ import LoginPage from "./components/page/login";
 import NotFoundPage from "./components/page/notFound";
 import { isLoggedIn } from "./utils/login";
 
-const ROUTE_TYPE = "hash";
+const ROUTE_TYPE = window.location.hash ? "hash" : "history"; // hash, history 왜 나눴을까 나는? 네?
 
 // 라우트 객체 : 라우트 경로와 해당 경로에 대한 페이지 컴포넌트 매핑
 const routes = {
@@ -17,12 +17,9 @@ const routes = {
 // 라우팅 함수 : URL이 변경된 후, popstate 이벤트리스너로 트리거되어서 실행
 function handleRoute() {
   let path;
-  if (ROUTE_TYPE === "hash") {
-    path = window.location.hash.slice(1);
-    console.log(path);
-  } else {
-    path = window.location.pathname;
-  }
+  window.location.hash
+    ? (path = window.location.hash.slice(1))
+    : (path = window.location.pathname);
   let page;
 
   if (path === "/profile") {
