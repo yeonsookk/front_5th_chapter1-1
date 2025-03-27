@@ -5,8 +5,8 @@
   new MutationObserver((o) => {
     for (const l of o)
       if (l.type === "childList")
-        for (const r of l.addedNodes)
-          r.tagName === "LINK" && r.rel === "modulepreload" && a(r);
+        for (const c of l.addedNodes)
+          c.tagName === "LINK" && c.rel === "modulepreload" && a(c);
   }).observe(document, { childList: !0, subtree: !0 });
   function n(o) {
     const l = {};
@@ -28,19 +28,33 @@
     fetch(o.href, l);
   }
 })();
-const i = () => !!localStorage.getItem("user"),
-  u = () => `
+const r = () => !!localStorage.getItem("user"),
+  m = () => `
   <header class="bg-blue-600 text-white p-4 sticky top-0">
     <h1 class="text-2xl font-bold">항해플러스</h1>
   </header>
 `,
-  m = () => `
+  f = (e) => `
   <nav class="bg-white shadow-md p-2 sticky top-14">
     <ul class="flex justify-around">
-      <li><a href="/" class="text-blue-600 font-bold" data-link>홈</a></li>
-      <li><a href="/profile" class="text-gray-600" data-link>프로필</a></li>
+      <li>
+        <a
+          href="/"
+          class="${e === "/" ? "text-blue-600 font-bold" : "text-gray-600"}"
+          data-link
+          >홈</a
+        >
+      </li>
+      <li>
+        <a
+          href="/profile"
+          class="${e === "/profile" ? "text-blue-600 font-bold" : "text-gray-600"}"
+          data-link
+          >프로필</a
+        >
+      </li>
       ${
-        i()
+        r()
           ? `
             <li>
               <a id="logout" href="#" class="text-gray-600">로그아웃</a>
@@ -55,7 +69,7 @@ const i = () => !!localStorage.getItem("user"),
     </ul>
   </nav>
 `,
-  f = () => `
+  p = () => `
   <footer class="bg-gray-200 p-4 text-center">
     <p>&copy; 2024 항해플러스. All rights reserved.</p>
   </footer>
@@ -63,7 +77,7 @@ const i = () => !!localStorage.getItem("user"),
   b = () => `
   <div class="bg-gray-100 min-h-screen flex justify-center">
     <div class="max-w-md w-full">
-      ${u()} ${m()}
+      ${m()} ${f("/")}
 
       <main class="p-4">
         <div class="mb-4 bg-white rounded-lg shadow p-4">
@@ -76,10 +90,10 @@ const i = () => !!localStorage.getItem("user"),
           </button>
         </div>
 
-        <div class="space-y-4">${g.map(v).join("")}</div>
+        <div class="space-y-4">${g.map(w).join("")}</div>
       </main>
 
-      ${f()}
+      ${p()}
     </div>
   </div>
 `,
@@ -115,7 +129,7 @@ const i = () => !!localStorage.getItem("user"),
       createdAt: "2시간전",
     },
   ],
-  v = (e) => `
+  w = (e) => `
   <div class="bg-white rounded-lg shadow p-4">
     <div class="flex items-center mb-2">
       <img
@@ -140,7 +154,7 @@ const i = () => !!localStorage.getItem("user"),
   <div id="root">
     <div class="bg-gray-100 min-h-screen flex justify-center">
       <div class="max-w-md w-full">
-        ${u()} ${m()}
+        ${m()} ${f("/profile")}
 
         <main class="p-4">
           <div class="bg-white p-8 rounded-lg shadow-md">
@@ -201,13 +215,13 @@ const i = () => !!localStorage.getItem("user"),
           </div>
         </main>
 
-        ${f()}
+        ${p()}
       </div>
     </div>
   </div>
 `,
-  h = () => (
-    i() &&
+  v = () => (
+    r() &&
       (history.pushState({}, "", "/"),
       window.dispatchEvent(new Event("popstate"))),
     `
@@ -273,29 +287,45 @@ const i = () => !!localStorage.getItem("user"),
     </div>
   </main>
 `,
-  s = { "/": b, "/profile": x, "/login": h, "*": y };
-function c() {
-  const e = window.location.pathname;
+  i = window.location.hash ? "hash" : "history",
+  s = { "/": b, "/profile": x, "/login": v, "*": y };
+function d() {
+  let e;
+  window.location.hash
+    ? (e = window.location.hash.slice(1))
+    : (e = window.location.pathname);
   let t;
   e === "/profile"
-    ? i()
-      ? (window.history.replaceState({}, "", "/profile"), (t = s["/profile"]))
-      : (window.history.replaceState({}, "", "/login"), (t = s["/login"]))
+    ? r()
+      ? (i === "hash"
+          ? (window.location.hash = "/profile")
+          : window.history.replaceState({}, "", "/profile"),
+        (t = s["/profile"]))
+      : (i === "hash"
+          ? (window.location.hash = "/login")
+          : window.history.replaceState({}, "", "/login"),
+        (t = s["/login"]))
     : e === "/login"
-      ? i()
-        ? (window.history.replaceState({}, "", "/"), (t = s["/"]))
-        : (window.history.replaceState({}, "", "/login"), (t = s["/login"]))
+      ? r()
+        ? (i === "hash"
+            ? (window.location.hash = "/")
+            : window.history.replaceState({}, "", "/"),
+          (t = s["/"]))
+        : (i === "hash"
+            ? (window.location.hash = "/login")
+            : window.history.replaceState({}, "", "/login"),
+          (t = s["/login"]))
       : (t = s[e] || s["*"]),
-    p(t());
+    h(t());
 }
-function p(e) {
+function h(e) {
   const t = document.getElementById("root");
   if (t && ((t.innerHTML = e), window.location.pathname === "/profile")) {
     const n = JSON.parse(localStorage.getItem("user"));
-    w(n);
+    E(n);
   }
 }
-function w(e) {
+function E(e) {
   if (!document.getElementById("profile-form")) return;
   const n = document.getElementById("username"),
     a = document.getElementById("email"),
@@ -304,16 +334,22 @@ function w(e) {
     (a.value = e.email || ""),
     (o.value = e.bio || "");
 }
-window.addEventListener("popstate", c);
-c();
-function d(e) {
-  history.pushState({}, "", e), window.dispatchEvent(new Event("popstate"));
+window.addEventListener("popstate", d);
+window.addEventListener("hashchange", d);
+d();
+function u(e) {
+  if (i === "hash") {
+    const t = "/" + e.split("/").pop();
+    window.location.hash = t;
+  } else
+    window.history.pushState({}, "", e),
+      window.dispatchEvent(new Event("popstate"));
 }
 window.addEventListener("click", (e) => {
   const t = e.target.closest("[data-link]");
-  if (t) e.preventDefault(), d(t.href);
+  if (t) e.preventDefault(), u(t.href);
   else if (e.target.id === "login") {
-    if (!i()) {
+    if (!r()) {
       e.preventDefault();
       const n = document.getElementById("username").value;
       localStorage.setItem(
@@ -321,14 +357,16 @@ window.addEventListener("click", (e) => {
         JSON.stringify({ username: n, email: "", bio: "" }),
       );
     }
-    d("/");
+    u("/");
   } else
     e.target.id === "logout" &&
       (console.log("logout"),
       e.preventDefault(),
       localStorage.removeItem("user"),
-      window.history.replaceState({}, "", "/login"),
-      c());
+      i === "hash"
+        ? (window.location.hash = "/login")
+        : window.history.replaceState({}, "", "/login"),
+      d());
 });
 window.addEventListener("submit", (e) => {
   if ((e.preventDefault(), e.target.id === "login-form")) {
@@ -337,7 +375,7 @@ window.addEventListener("submit", (e) => {
       "user",
       JSON.stringify({ username: t, email: "", bio: "" }),
     ),
-      d("/");
+      u("/");
   } else if (e.target.id === "profile-form") {
     const t = document.getElementById("username").value,
       n = document.getElementById("email").value,
@@ -346,6 +384,6 @@ window.addEventListener("submit", (e) => {
       "user",
       JSON.stringify({ username: t, email: n, bio: a }),
     ),
-      p(s["/profile"]());
+      h(s["/profile"]());
   }
 });
