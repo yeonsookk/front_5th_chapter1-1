@@ -3,6 +3,9 @@ import ProfilePage from "./components/page/profile";
 import LoginPage from "./components/page/login";
 import NotFoundPage from "./components/page/notFound";
 import { isLoggedIn } from "./utils/login";
+
+const ROUTE_TYPE = window.location.hash ? "hash" : "history"; // hash, history 왜 나눴을까 나는? 네?
+
 // 라우트 객체 : 라우트 경로와 해당 경로에 대한 페이지 컴포넌트 매핑
 const routes = {
   "/": HomePage,
@@ -13,25 +16,44 @@ const routes = {
 
 // 라우팅 함수 : URL이 변경된 후, popstate 이벤트리스너로 트리거되어서 실행
 function handleRoute() {
-  const path = window.location.pathname;
+  let path;
+  window.location.hash
+    ? (path = window.location.hash.slice(1))
+    : (path = window.location.pathname);
   let page;
 
   if (path === "/profile") {
     if (!isLoggedIn()) {
       // 로그인 페이지로 리다이렉트
-      window.history.replaceState({}, "", "/login");
+      if (ROUTE_TYPE === "hash") {
+        window.location.hash = "/login";
+      } else {
+        window.history.replaceState({}, "", "/login");
+      }
       page = routes["/login"];
     } else {
       // URL을 /profile로 유지하고 프로필 페이지 표시
-      window.history.replaceState({}, "", "/profile");
+      if (ROUTE_TYPE === "hash") {
+        window.location.hash = "/profile";
+      } else {
+        window.history.replaceState({}, "", "/profile");
+      }
       page = routes["/profile"];
     }
   } else if (path === "/login") {
     if (isLoggedIn()) {
-      window.history.replaceState({}, "", "/");
+      if (ROUTE_TYPE === "hash") {
+        window.location.hash = "/";
+      } else {
+        window.history.replaceState({}, "", "/");
+      }
       page = routes["/"];
     } else {
-      window.history.replaceState({}, "", "/login");
+      if (ROUTE_TYPE === "hash") {
+        window.location.hash = "/login";
+      } else {
+        window.history.replaceState({}, "", "/login");
+      }
       page = routes["/login"];
     }
   } else {
@@ -72,13 +94,21 @@ function updateProfile(user) {
 // popstate 이벤트 리스너
 window.addEventListener("popstate", handleRoute);
 
+// hashchange 이벤트 리스너
+window.addEventListener("hashchange", handleRoute);
+
 // REVIEW:로드 이벤트 리스너
 // window.addEventListener("load", handleRoute);
 handleRoute();
 
 function navigate(path) {
-  history.pushState({}, "", path); // URL변경
-  window.dispatchEvent(new Event("popstate")); // popstate 이벤트 (강제) 실행
+  if (ROUTE_TYPE === "hash") {
+    const hashPath = "/" + path.split("/").pop();
+    window.location.hash = hashPath;
+  } else {
+    window.history.pushState({}, "", path);
+    window.dispatchEvent(new Event("popstate")); // popstate 이벤트 (강제) 실행
+  }
 }
 
 // 네비게이션 요소 연결
@@ -102,7 +132,11 @@ window.addEventListener("click", (e) => {
     console.log("logout");
     e.preventDefault();
     localStorage.removeItem("user");
-    window.history.replaceState({}, "", "/login"); // 로그아웃 후 로그인 페이지로 이동
+    if (ROUTE_TYPE === "hash") {
+      window.location.hash = "/login";
+    } else {
+      window.history.replaceState({}, "", "/login");
+    }
     handleRoute();
   }
 });
