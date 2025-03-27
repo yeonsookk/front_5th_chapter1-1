@@ -47,17 +47,25 @@ describe("심화과제 테스트", () => {
     });
 
     it("로그인된 사용자가 로그인 페이지에 접근시 메인 페이지로 리다이렉트 한다.", async () => {
+      // 1. 로그인 페이지로 이동
       goTo("/login");
 
+      // 2. 로그인 폼 요소 가져오기
       const loginForm = document.getElementById("login-form");
 
+      // 3. 사용자 이름 입력
       await user.type(document.getElementById("username"), "testuser");
 
+      // 4. 로그인 폼 제출 이벤트 발생
       loginForm.dispatchEvent(
         new SubmitEvent("submit", { bubbles: true, cancelable: true }),
       );
 
+      // 5. 로그인 후 다시 로그인 페이지로 접근 시도
       goTo("/login");
+
+      // 6. 메인 페이지로 리다이렉트 되었는지 확인
+      // 네비게이션 바에서 "홈" 텍스트가 있는지 확인
       expect(
         document.querySelector("nav .text-blue-600.font-bold").innerHTML,
       ).toContain("홈");
