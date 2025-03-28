@@ -1,12 +1,12 @@
 (function () {
   const t = document.createElement("link").relList;
   if (t && t.supports && t.supports("modulepreload")) return;
-  for (const o of document.querySelectorAll('link[rel="modulepreload"]')) s(o);
+  for (const o of document.querySelectorAll('link[rel="modulepreload"]')) a(o);
   new MutationObserver((o) => {
     for (const l of o)
       if (l.type === "childList")
-        for (const u of l.addedNodes)
-          u.tagName === "LINK" && u.rel === "modulepreload" && s(u);
+        for (const c of l.addedNodes)
+          c.tagName === "LINK" && c.rel === "modulepreload" && a(c);
   }).observe(document, { childList: !0, subtree: !0 });
   function n(o) {
     const l = {};
@@ -21,20 +21,20 @@
       l
     );
   }
-  function s(o) {
+  function a(o) {
     if (o.ep) return;
     o.ep = !0;
     const l = n(o);
     fetch(o.href, l);
   }
 })();
-const d = () => !!localStorage.getItem("user"),
-  f = () => `
+const r = () => !!localStorage.getItem("user"),
+  m = () => `
   <header class="bg-blue-600 text-white p-4 sticky top-0">
     <h1 class="text-2xl font-bold">항해플러스</h1>
   </header>
 `,
-  p = (e) => `
+  f = (e) => `
   <nav class="bg-white shadow-md p-2 sticky top-14">
     <ul class="flex justify-around">
       <li>
@@ -54,7 +54,7 @@ const d = () => !!localStorage.getItem("user"),
         >
       </li>
       ${
-        d()
+        r()
           ? `
             <li>
               <a id="logout" href="#" class="text-gray-600">로그아웃</a>
@@ -69,15 +69,15 @@ const d = () => !!localStorage.getItem("user"),
     </ul>
   </nav>
 `,
-  h = () => `
+  p = () => `
   <footer class="bg-gray-200 p-4 text-center">
     <p>&copy; 2024 항해플러스. All rights reserved.</p>
   </footer>
 `,
-  g = () => `
+  b = () => `
   <div class="bg-gray-100 min-h-screen flex justify-center">
     <div class="max-w-md w-full">
-      ${f()} ${p("/")}
+      ${m()} ${f("/")}
 
       <main class="p-4">
         <div class="mb-4 bg-white rounded-lg shadow p-4">
@@ -90,14 +90,14 @@ const d = () => !!localStorage.getItem("user"),
           </button>
         </div>
 
-        <div class="space-y-4">${w.map(x).join("")}</div>
+        <div class="space-y-4">${g.map(w).join("")}</div>
       </main>
 
-      ${h()}
+      ${p()}
     </div>
   </div>
 `,
-  w = [
+  g = [
     {
       id: 0,
       username: "홍길동",
@@ -129,7 +129,7 @@ const d = () => !!localStorage.getItem("user"),
       createdAt: "2시간전",
     },
   ],
-  x = (e) => `
+  w = (e) => `
   <div class="bg-white rounded-lg shadow p-4">
     <div class="flex items-center mb-2">
       <img
@@ -150,11 +150,11 @@ const d = () => !!localStorage.getItem("user"),
     </div>
   </div>
 `,
-  v = () => `
+  x = () => `
   <div id="root">
     <div class="bg-gray-100 min-h-screen flex justify-center">
       <div class="max-w-md w-full">
-        ${f()} ${p("/profile")}
+        ${m()} ${f("/profile")}
 
         <main class="p-4">
           <div class="bg-white p-8 rounded-lg shadow-md">
@@ -215,13 +215,13 @@ const d = () => !!localStorage.getItem("user"),
           </div>
         </main>
 
-        ${h()}
+        ${p()}
       </div>
     </div>
   </div>
 `,
-  y = () => (
-    d() &&
+  v = () => (
+    r() &&
       (history.pushState({}, "", "/"),
       window.dispatchEvent(new Event("popstate"))),
     `
@@ -269,7 +269,7 @@ const d = () => !!localStorage.getItem("user"),
     </main>
   `
   ),
-  E = () => `
+  y = () => `
   <main class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div
       class="bg-white p-8 rounded-lg shadow-md w-full text-center"
@@ -287,73 +287,69 @@ const d = () => !!localStorage.getItem("user"),
     </div>
   </main>
 `,
-  r = window.location.hash ? "hash" : "history",
-  a = "/front_5th_chapter1-1",
-  i = { "/": g, "/profile": v, "/login": y, "*": E };
-function c() {
+  i = window.location.hash ? "hash" : "history",
+  s = { "/": b, "/profile": x, "/login": v, "*": y };
+function d() {
   let e;
   window.location.hash
     ? (e = window.location.hash.slice(1))
-    : (e = window.location.pathname.replace(a, ""));
+    : (e = window.location.pathname);
   let t;
   e === "/profile"
-    ? d()
-      ? (r === "hash"
+    ? r()
+      ? (i === "hash"
           ? (window.location.hash = "/profile")
-          : window.history.replaceState({}, "", a + "/profile"),
-        (t = i["/profile"]))
-      : (r === "hash"
+          : window.history.replaceState({}, "", "/profile"),
+        (t = s["/profile"]))
+      : (i === "hash"
           ? (window.location.hash = "/login")
-          : window.history.replaceState({}, "", a + "/login"),
-        (t = i["/login"]))
+          : window.history.replaceState({}, "", "/login"),
+        (t = s["/login"]))
     : e === "/login"
-      ? d()
-        ? (r === "hash"
+      ? r()
+        ? (i === "hash"
             ? (window.location.hash = "/")
-            : window.history.replaceState({}, "", a + "/"),
-          (t = i["/"]))
-        : (r === "hash"
+            : window.history.replaceState({}, "", "/"),
+          (t = s["/"]))
+        : (i === "hash"
             ? (window.location.hash = "/login")
-            : window.history.replaceState({}, "", a + "/login"),
-          (t = i["/login"]))
-      : (t = i[e] || i["*"]),
-    b(t());
+            : window.history.replaceState({}, "", "/login"),
+          (t = s["/login"]))
+      : (t = s[e] || s["*"]),
+    h(t());
 }
-function b(e) {
+function h(e) {
   const t = document.getElementById("root");
-  if (!t) return;
-  if (
-    ((t.innerHTML = e), window.location.pathname.replace(a, "") === "/profile")
-  ) {
-    const s = JSON.parse(localStorage.getItem("user"));
-    I(s);
+  if (t && ((t.innerHTML = e), window.location.pathname === "/profile")) {
+    const n = JSON.parse(localStorage.getItem("user"));
+    E(n);
   }
 }
-function I(e) {
+function E(e) {
   if (!document.getElementById("profile-form")) return;
   const n = document.getElementById("username"),
-    s = document.getElementById("email"),
+    a = document.getElementById("email"),
     o = document.getElementById("bio");
   (n.value = e.username || ""),
-    (s.value = e.email || ""),
+    (a.value = e.email || ""),
     (o.value = e.bio || "");
 }
-window.addEventListener("popstate", c);
-window.addEventListener("hashchange", c);
-c();
-function m(e) {
-  if (r === "hash") {
+window.addEventListener("popstate", d);
+window.addEventListener("hashchange", d);
+d();
+function u(e) {
+  if (i === "hash") {
     const t = "/" + e.split("/").pop();
     window.location.hash = t;
   } else
-    window.history.pushState({}, "", a + e),
+    window.history.pushState({}, "", e),
       window.dispatchEvent(new Event("popstate"));
 }
 window.addEventListener("click", (e) => {
   const t = e.target.closest("[data-link]");
-  if (t) e.preventDefault(), m(t.href);
+  if (t) e.preventDefault(), u(t.href);
   else if (e.target.id === "login") {
-    if (!d()) {
+    if (!r()) {
       e.preventDefault();
       const n = document.getElementById("username").value;
       localStorage.setItem(
@@ -361,16 +357,16 @@ window.addEventListener("click", (e) => {
         JSON.stringify({ username: n, email: "", bio: "" }),
       );
     }
-    m("/");
+    u("/");
   } else
     e.target.id === "logout" &&
       (console.log("logout"),
       e.preventDefault(),
       localStorage.removeItem("user"),
-      r === "hash"
+      i === "hash"
         ? (window.location.hash = "/login")
-        : window.history.replaceState({}, "", a + "/login"),
-      c());
+        : window.history.replaceState({}, "", "/login"),
+      d());
 });
 window.addEventListener("submit", (e) => {
   if ((e.preventDefault(), e.target.id === "login-form")) {
@@ -379,15 +375,15 @@ window.addEventListener("submit", (e) => {
       "user",
       JSON.stringify({ username: t, email: "", bio: "" }),
     ),
-      m("/");
+      u("/");
   } else if (e.target.id === "profile-form") {
     const t = document.getElementById("username").value,
       n = document.getElementById("email").value,
-      s = document.getElementById("bio").value;
+      a = document.getElementById("bio").value;
     localStorage.setItem(
       "user",
-      JSON.stringify({ username: t, email: n, bio: s }),
+      JSON.stringify({ username: t, email: n, bio: a }),
     ),
-      b(i["/profile"]());
+      h(s["/profile"]());
   }
 });
