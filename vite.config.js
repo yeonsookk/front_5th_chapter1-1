@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig(({ mode }) => {
   const isProduction = mode === "production";
   return {
-    base: isProduction ? "/front-5th-chapter1-1/" : "/",
+    base: isProduction ? "/front_5th_chapter1-1/" : "/",
     build: {
       outDir: "docs",
     },
