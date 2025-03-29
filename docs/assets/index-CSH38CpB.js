@@ -1,40 +1,40 @@
 (function () {
-  const t = document.createElement("link").relList;
-  if (t && t.supports && t.supports("modulepreload")) return;
-  for (const o of document.querySelectorAll('link[rel="modulepreload"]')) a(o);
-  new MutationObserver((o) => {
-    for (const l of o)
+  const o = document.createElement("link").relList;
+  if (o && o.supports && o.supports("modulepreload")) return;
+  for (const t of document.querySelectorAll('link[rel="modulepreload"]')) a(t);
+  new MutationObserver((t) => {
+    for (const l of t)
       if (l.type === "childList")
-        for (const c of l.addedNodes)
-          c.tagName === "LINK" && c.rel === "modulepreload" && a(c);
+        for (const d of l.addedNodes)
+          d.tagName === "LINK" && d.rel === "modulepreload" && a(d);
   }).observe(document, { childList: !0, subtree: !0 });
-  function n(o) {
+  function n(t) {
     const l = {};
     return (
-      o.integrity && (l.integrity = o.integrity),
-      o.referrerPolicy && (l.referrerPolicy = o.referrerPolicy),
-      o.crossOrigin === "use-credentials"
+      t.integrity && (l.integrity = t.integrity),
+      t.referrerPolicy && (l.referrerPolicy = t.referrerPolicy),
+      t.crossOrigin === "use-credentials"
         ? (l.credentials = "include")
-        : o.crossOrigin === "anonymous"
+        : t.crossOrigin === "anonymous"
           ? (l.credentials = "omit")
           : (l.credentials = "same-origin"),
       l
     );
   }
-  function a(o) {
-    if (o.ep) return;
-    o.ep = !0;
-    const l = n(o);
-    fetch(o.href, l);
+  function a(t) {
+    if (t.ep) return;
+    t.ep = !0;
+    const l = n(t);
+    fetch(t.href, l);
   }
 })();
 const r = () => !!localStorage.getItem("user"),
-  m = () => `
+  u = () => `
   <header class="bg-blue-600 text-white p-4 sticky top-0">
     <h1 class="text-2xl font-bold">항해플러스</h1>
   </header>
 `,
-  f = (e) => `
+  m = (e) => `
   <nav class="bg-white shadow-md p-2 sticky top-14">
     <ul class="flex justify-around">
       <li>
@@ -69,7 +69,7 @@ const r = () => !!localStorage.getItem("user"),
     </ul>
   </nav>
 `,
-  p = () => `
+  f = () => `
   <footer class="bg-gray-200 p-4 text-center">
     <p>&copy; 2024 항해플러스. All rights reserved.</p>
   </footer>
@@ -77,7 +77,7 @@ const r = () => !!localStorage.getItem("user"),
   b = () => `
   <div class="bg-gray-100 min-h-screen flex justify-center">
     <div class="max-w-md w-full">
-      ${m()} ${f("/")}
+      ${u()} ${m("/")}
 
       <main class="p-4">
         <div class="mb-4 bg-white rounded-lg shadow p-4">
@@ -90,14 +90,14 @@ const r = () => !!localStorage.getItem("user"),
           </button>
         </div>
 
-        <div class="space-y-4">${g.map(w).join("")}</div>
+        <div class="space-y-4">${h.map(g).join("")}</div>
       </main>
 
-      ${p()}
+      ${f()}
     </div>
   </div>
 `,
-  g = [
+  h = [
     {
       id: 0,
       username: "홍길동",
@@ -129,7 +129,7 @@ const r = () => !!localStorage.getItem("user"),
       createdAt: "2시간전",
     },
   ],
-  w = (e) => `
+  g = (e) => `
   <div class="bg-white rounded-lg shadow p-4">
     <div class="flex items-center mb-2">
       <img
@@ -154,7 +154,7 @@ const r = () => !!localStorage.getItem("user"),
   <div id="root">
     <div class="bg-gray-100 min-h-screen flex justify-center">
       <div class="max-w-md w-full">
-        ${m()} ${f("/profile")}
+        ${u()} ${m("/profile")}
 
         <main class="p-4">
           <div class="bg-white p-8 rounded-lg shadow-md">
@@ -215,12 +215,12 @@ const r = () => !!localStorage.getItem("user"),
           </div>
         </main>
 
-        ${p()}
+        ${f()}
       </div>
     </div>
   </div>
 `,
-  v = () => (
+  w = () => (
     r() &&
       (history.pushState({}, "", "/"),
       window.dispatchEvent(new Event("popstate"))),
@@ -287,103 +287,47 @@ const r = () => !!localStorage.getItem("user"),
     </div>
   </main>
 `,
-  i = window.location.hash ? "hash" : "history",
-  s = { "/": b, "/profile": x, "/login": v, "*": y };
-function d() {
+  p = window.location.hash ? "hash" : "history";
+p === "history" && window.history.pushState(null, null, "/");
+const s = { "/": b, "/profile": x, "/login": w, "*": y };
+function i(e) {
+  p === "hash"
+    ? (window.location.hash = e)
+    : window.history.replaceState({}, "", e);
+}
+function c() {
   let e;
   window.location.hash
     ? (e = window.location.hash.slice(1))
     : (e = window.location.pathname);
-  let t;
+  let o;
   e === "/profile"
     ? r()
-      ? (i === "hash"
-          ? (window.location.hash = "/profile")
-          : window.history.replaceState({}, "", "/profile"),
-        (t = s["/profile"]))
-      : (i === "hash"
-          ? (window.location.hash = "/login")
-          : window.history.replaceState({}, "", "/login"),
-        (t = s["/login"]))
+      ? (i("/profile"), (o = s["/profile"]))
+      : (i("/login"), (o = s["/login"]))
     : e === "/login"
       ? r()
-        ? (i === "hash"
-            ? (window.location.hash = "/")
-            : window.history.replaceState({}, "", "/"),
-          (t = s["/"]))
-        : (i === "hash"
-            ? (window.location.hash = "/login")
-            : window.history.replaceState({}, "", "/login"),
-          (t = s["/login"]))
-      : (t = s[e] || s["*"]),
-    h(t());
+        ? (i("/"), (o = s["/"]))
+        : (i("/login"), (o = s["/login"]))
+      : (o = s[e] || s["*"]),
+    v(o());
 }
-function h(e) {
-  const t = document.getElementById("root");
-  if (t && ((t.innerHTML = e), window.location.pathname === "/profile")) {
+function v(e) {
+  const o = document.getElementById("root");
+  if (o && ((o.innerHTML = e), window.location.pathname === "/profile")) {
     const n = JSON.parse(localStorage.getItem("user"));
-    E(n);
+    $(n);
   }
 }
-function E(e) {
+function $(e) {
   if (!document.getElementById("profile-form")) return;
   const n = document.getElementById("username"),
     a = document.getElementById("email"),
-    o = document.getElementById("bio");
+    t = document.getElementById("bio");
   (n.value = e.username || ""),
     (a.value = e.email || ""),
-    (o.value = e.bio || "");
+    (t.value = e.bio || "");
 }
-window.addEventListener("popstate", d);
-window.addEventListener("hashchange", d);
-d();
-function u(e) {
-  if (i === "hash") {
-    const t = "/" + e.split("/").pop();
-    window.location.hash = t;
-  } else
-    window.history.pushState({}, "", e),
-      window.dispatchEvent(new Event("popstate"));
-}
-window.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-link]");
-  if (t) e.preventDefault(), u(t.href);
-  else if (e.target.id === "login") {
-    if (!r()) {
-      e.preventDefault();
-      const n = document.getElementById("username").value;
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ username: n, email: "", bio: "" }),
-      );
-    }
-    u("/");
-  } else
-    e.target.id === "logout" &&
-      (console.log("logout"),
-      e.preventDefault(),
-      localStorage.removeItem("user"),
-      i === "hash"
-        ? (window.location.hash = "/login")
-        : window.history.replaceState({}, "", "/login"),
-      d());
-});
-window.addEventListener("submit", (e) => {
-  if ((e.preventDefault(), e.target.id === "login-form")) {
-    const t = document.getElementById("username").value;
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ username: t, email: "", bio: "" }),
-    ),
-      u("/");
-  } else if (e.target.id === "profile-form") {
-    const t = document.getElementById("username").value,
-      n = document.getElementById("email").value,
-      a = document.getElementById("bio").value;
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ username: t, email: n, bio: a }),
-    ),
-      h(s["/profile"]());
-  }
-});
+window.addEventListener("popstate", c);
+window.addEventListener("hashchange", c);
+c();
