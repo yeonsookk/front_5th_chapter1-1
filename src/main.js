@@ -4,7 +4,12 @@ import LoginPage from "./components/page/login";
 import NotFoundPage from "./components/page/notFound";
 import { isLoggedIn } from "./utils/login";
 
-const ROUTE_TYPE = window.location.hash ? "hash" : "history"; // hash, history 왜 나눴을까 나는? 네?
+const ROUTE_TYPE = window.location.hash ? "hash" : "history";
+
+// 초기 라우트 상태 설정
+if (ROUTE_TYPE === "history") {
+  window.history.pushState(null, null, "/");
+}
 
 // 라우트 객체 : 라우트 경로와 해당 경로에 대한 페이지 컴포넌트 매핑
 const routes = {
@@ -13,6 +18,15 @@ const routes = {
   "/login": LoginPage,
   "*": NotFoundPage,
 };
+
+// 라우트 변경 함수
+function updateRoute(path) {
+  if (ROUTE_TYPE === "hash") {
+    window.location.hash = path;
+  } else {
+    window.history.replaceState({}, "", path);
+  }
+}
 
 // 라우팅 함수 : URL이 변경된 후, popstate 이벤트리스너로 트리거되어서 실행
 function handleRoute() {
@@ -24,36 +38,18 @@ function handleRoute() {
 
   if (path === "/profile") {
     if (!isLoggedIn()) {
-      // 로그인 페이지로 리다이렉트
-      if (ROUTE_TYPE === "hash") {
-        window.location.hash = "/login";
-      } else {
-        window.history.replaceState({}, "", "/login");
-      }
+      updateRoute("/login");
       page = routes["/login"];
     } else {
-      // URL을 /profile로 유지하고 프로필 페이지 표시
-      if (ROUTE_TYPE === "hash") {
-        window.location.hash = "/profile";
-      } else {
-        window.history.replaceState({}, "", "/profile");
-      }
+      updateRoute("/profile");
       page = routes["/profile"];
     }
   } else if (path === "/login") {
     if (isLoggedIn()) {
-      if (ROUTE_TYPE === "hash") {
-        window.location.hash = "/";
-      } else {
-        window.history.replaceState({}, "", "/");
-      }
+      updateRoute("/");
       page = routes["/"];
     } else {
-      if (ROUTE_TYPE === "hash") {
-        window.location.hash = "/login";
-      } else {
-        window.history.replaceState({}, "", "/login");
-      }
+      updateRoute("/login");
       page = routes["/login"];
     }
   } else {
